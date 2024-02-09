@@ -1,130 +1,64 @@
 import React, { useState } from 'react';
-import Modal from 'react-modal';
 import axios from 'axios';
 
-const API_KEY = 'your_api_key';
-const API_SECRET = 'your_api_secret';
-const HUBTEL_PAYMENT_URL = 'https://api.hubtel.com/v2/pos/onlinecheckout/items/initiate';
-
-function CardPaymentForm({ paymentDetails, setPaymentDetails }) {
-  return (
-    <div>
-      <label>Card Number:</label>
-      <input
-        type="text"
-        value={paymentDetails.cardNumber}
-        onChange={(e) => setPaymentDetails({ ...paymentDetails, cardNumber: e.target.value })}
-      />
-      <label>Expiration Date:</label>
-      <input
-        type="text"
-        value={paymentDetails.expirationDate}
-        onChange={(e) => setPaymentDetails({ ...paymentDetails, expirationDate: e.target.value })}
-      />
-      <label>CVV:</label>
-      <input
-        type="text"
-        value={paymentDetails.cvv}
-        onChange={(e) => setPaymentDetails({ ...paymentDetails, cvv: e.target.value })}
-      />
-    </div>
-  );
-}
-
-function MobileMoneyForm({ paymentDetails, setPaymentDetails }) {
-  return (
-    <div>
-      <label>Mobile Number:</label>
-      <input
-        type="text"
-        value={paymentDetails.mobileNumber}
-        onChange={(e) => setPaymentDetails({ ...paymentDetails, mobileNumber: e.target.value })}
-      />
-    </div>
-  );
-}
-
-function PaymentMode() {
+function DeleteCustomer({ customerId, onDelete, customerDetails }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(''); // 'card' or 'mobileMoney'
-  const [paymentData, setPaymentData] = useState({});
-  const [paymentDetails, setPaymentDetails] = useState({
-    card: {
-      cardNumber: '',
-      expirationDate: '',
-      cvv: '',
-    },
-    mobileMoney: {
-      mobileNumber: '',
-    },
-  });
 
-  const handlePayment = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handlePaymentMethodChange = (method) => {
-    setPaymentMethod(method);
-  };
-
-  const handlePaymentSubmit = async () => {
-    try {
-      const response = await axios.post(HUBTEL_PAYMENT_URL, {
-        apiKey: API_KEY,
-        apiSecret: API_SECRET,
-        paymentDetails: paymentDetails[paymentMethod],
+  const handleDelete = () => {
+    axios.delete(`https://localhost:7074/api/customer/${customerId}`)
+      .then(() => {
+        onDelete();
+        setIsModalOpen(false);
+      })
+      .catch((error) => {
+        console.error('Error deleting booking:', error);
       });
-      setPaymentData(response.data);
-      closeModal();
-    } catch (error) {
-      console.error('Error initiating payment:', error);
-    }
-  };
+  }
 
   return (
     <div>
-      <button onClick={handlePayment}>Pay with Hubtel</button>
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        contentLabel="Payment Modal"
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="text-red-500 hover:text-red-700 cursor-pointer"
       >
-        <h2>Payment Details</h2>
-        <div>
-          <label>
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="card"
-              checked={paymentMethod === 'card'}
-              onChange={() => handlePaymentMethodChange('card')}
-            />
-            Credit Card
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="mobileMoney"
-              checked={paymentMethod === 'mobileMoney'}
-              onChange={() => handlePaymentMethodChange('mobileMoney')}
-            />
-            Mobile Money
-          </label>
+        Delete
+      </button>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-gray-600 opacity-50" onClick={() => setIsModalOpen(false)}></div>
+          <div className="bg-white w-1/3 p-4 rounded-lg z-50">
+            <p className="text-xl mb-4">Confirm Deletion</p>
+            {customerDetails && (
+              <div className="mb-4">
+                <p>Customer Details:</p>
+                <p>ID: {customerDetails.customerId}</p>
+                <p>First Name: {customerDetails.firstName}</p>
+                <p>Last Name: {customerDetails.lastName}</p>
+                <p>Email: {customerDetails.email}</p>
+                <p>Phone: {customerDetails.phone}</p>
+              </div>
+            )}
+            <p>Are you sure you want to delete this Customer?</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="mr-2 px-4 py-2 text-gray-500 hover:text-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white hover:bg-red-700"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
-        <form>
-          {paymentMethod === 'card' && <CardPaymentForm paymentDetails={paymentDetails.card} setPaymentDetails={setPaymentDetails.card} />}
-          {paymentMethod === 'mobileMoney' && <MobileMoneyForm paymentDetails={paymentDetails.mobileMoney} setPaymentDetails={setPaymentDetails.mobileMoney} />}
-          <button type="button" onClick={handlePaymentSubmit}>Submit Payment</button>
-        </form>
-        <button onClick={closeModal}>Close</button>
-      </Modal>
+      )}
     </div>
   );
 }
 
-export default PaymentMode;
+export default DeleteCustomer;

@@ -49,7 +49,8 @@ function OrderTable() {
     return customer ? `${customer.firstName} ${customer.lastName}` : 'Unknown Customer';
   };
 
-  // Function to get picture title by PictureId
+  // Function to get picture title by PictureId <td className="px-4 py-2">{getCustomerName(order.customerId)}</td>
+                    //<td className="px-4 py-2">{getPictureTitle(order.pictureId)}</td>
   const getPictureTitle = (PictureId) => {
     const picture = pictures.find((p) => p.pictureId === PictureId);
     return picture ? picture.title : 'Unknown Picture';
@@ -74,8 +75,8 @@ function OrderTable() {
                 {orders.map((order) => (
                   <tr key={order.orderId}>
                     <td className="px-4 py-2">{order.orderId}</td>
-                    <td className="px-4 py-2">{getCustomerName(order.customerId)}</td>
-                    <td className="px-4 py-2">{getPictureTitle(order.pictureId)}</td>
+                    <td className="px-4 py-2">{order.customer}</td>
+                    <td className="px-4 py-2">{order.pictureOrdered}</td>
                     <td className="px-4 py-2">{order.orderDate}</td>
                   </tr>
                 ))}

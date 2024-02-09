@@ -12,6 +12,7 @@ function Update({}) {
     Title: '',
     Description: '',
     ImageUrl: '',
+    DownloadUrl: '',
     Price: '',
   });
 
@@ -27,6 +28,7 @@ const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
           Title: pictureData.title,
           Description: pictureData.description,
           ImageUrl: pictureData.imageUrl,
+          DownloadUrl: pictureData.downloadUrl,
           Price: pictureData.price,
         });
       })
@@ -102,6 +104,20 @@ const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
               type="text"
               name="ImageUrl"
               value={formData.ImageUrl}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ImageUrl">
+              Download Link
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="DownloadUrl"
+              type="text"
+              name="DownloadUrl"
+              value={formData.DownloadUrl}
               onChange={handleChange}
               required
             />

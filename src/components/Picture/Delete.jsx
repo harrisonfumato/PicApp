@@ -34,7 +34,7 @@ function Delete({ pictureId, onDelete, pictureDetails }) {
                 <p>Piture Details:</p>
                 <p>ID: {pictureDetails.pictureId}</p>
                 <p>Title: {pictureDetails.title}</p>
-                <p>Description: {pictureDetails.Description}</p>
+                <p>Description: {pictureDetails.description}</p>
                 <p>Picture: {pictureDetails.imageUrl}</p>
                 <p>Price: {pictureDetails.price}</p>
               </div>

@@ -34,6 +34,7 @@ function PicTable() {
             <th className="px-4 py-2">Description</th>
             <th className="px-4 py-2">ImageUrl</th>
             <th className="px-4 py-2">Price</th>
+            <th className="px-4 py-2">Download Link</th>
             <th className="px-4 py-2">Actions</th>
           </tr>
         </thead>
@@ -45,6 +46,7 @@ function PicTable() {
               <td className="border px-4 py-2">{picture.description}</td>
               <td className="border px-4 py-2">{picture.imageUrl}</td>
               <td className="border px-4 py-2">{picture.price}</td>
+              <td className="border px-4 py-2">{picture.downloadUrl}</td>
               <td className="border px-4 py-2">
                 <Link to={`/picupdate/${picture.pictureId}`} className="text-blue-500 hover:text-blue-700">
                   Update

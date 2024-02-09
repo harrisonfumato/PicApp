@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function PictureCreateForm({ imageUrl, onCreateSuccess, onCreateError }) {
+function PictureCreateForm({ onClose,imageUrl, onCreateSuccess, onCreateError }) {
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     Title: '',
     Description: '',
     ImageUrl: imageUrl,
     Price: '',
     FolderName: '',
+    DownloadUrl: '',
   });
   const [loading, setLoading] = useState(false);
+  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,20 +23,32 @@ function PictureCreateForm({ imageUrl, onCreateSuccess, onCreateError }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     setLoading(true);
-
+  
     axios.post('https://localhost:7074/api/pictures/Create', formData)
       .then((createResponse) => {
-        onCreateSuccess(createResponse.data);
+        // Check if onCreateSuccess is provided before invoking
+        if (onCreateSuccess && typeof onCreateSuccess === 'function') {
+          onCreateSuccess(createResponse.data);
+        }
+        // Set success state to true
+        setSuccess(true);
       })
       .catch((error) => {
-        onCreateError(error);
+        console.log("Error occurred:", error);
+        // Check if onCreateError is provided before invoking
+        if (onCreateError && typeof onCreateError === 'function') {
+          onCreateError(error);
+        }
+        // Set error state
+        setError('Error creating picture. Please try again.');
       })
       .finally(() => {
         setLoading(false);
       });
   };
+  
 
   return (
     <div className="container mx-auto mt-5">
@@ -99,7 +116,20 @@ function PictureCreateForm({ imageUrl, onCreateSuccess, onCreateError }) {
               required
             />
           </div>
-          
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="DownloadUrl">
+              Download Link
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="DownloadUrl"
+              type="text"
+              name="DownloadUrl"
+              value={formData.DownloadUrl}
+              onChange={handleChange}
+              required
+            />
+          </div>
           <div className="flex items-center justify-center">
             {loading ? (
               <button
@@ -117,6 +147,12 @@ function PictureCreateForm({ imageUrl, onCreateSuccess, onCreateError }) {
                 Create
               </button>
             )}
+            <button
+            onClick={onClose} // Call the onClose function to close the modal
+            className="mt-0 bg-red-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Cancel
+            </button>
 
           </div>
         </form>

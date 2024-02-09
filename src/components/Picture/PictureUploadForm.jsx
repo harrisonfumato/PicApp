@@ -59,26 +59,32 @@ function PictureUploadForm() {
           imageUrl={uploadResponse[0].url} // Assuming the first URL is the one you want to use
         />
       ) : (
-        <div>
-          <h2>Upload Pictures</h2>
-          <div>
-            <label>Folder Name:</label>
-            <input type="text" value={folderName} onChange={handleFolderNameChange} />
+        <div className="container mx-auto mt-5">
+          <div className="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-md" >
+            <h2 className="text-2xl font-bold text-gray-800 text-center py-4">Upload Pictures</h2>
+            <form className="p-4">
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">Folder Name:</label>
+                <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" value={folderName} onChange={handleFolderNameChange} />
+              </div>
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-bold mb-2">Select Pictures:</label>
+                <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="file" multiple onChange={handleFileChange} />
+              </div>
+              <div className="flex items-center justify-center mb-2">
+                <button className="bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-not-allowed" onClick={handleUpload} disabled={uploading}>
+                  Upload
+                </button>
+              </div>
+              {error && <p className="text-red-600">{error}</p>}
+              {uploadResponse && (
+                <div>
+                  <h3>Upload Response:</h3>
+                  <pre>{JSON.stringify(uploadResponse, null, 2)}</pre>
+                </div>
+              )}
+            </form>
           </div>
-          <div>
-            <label>Select Pictures:</label>
-            <input type="file" multiple onChange={handleFileChange} />
-          </div>
-          <button onClick={handleUpload} disabled={uploading}>
-            Upload
-          </button>
-          {error && <p className="text-red-600">{error}</p>}
-          {uploadResponse && (
-            <div>
-              <h3>Upload Response:</h3>
-              <pre>{JSON.stringify(uploadResponse, null, 2)}</pre>
-            </div>
-          )}
         </div>
       )}
     </div>
