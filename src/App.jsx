@@ -9,6 +9,9 @@ import Dashboard from './components/Dashboard.jsx';
 import Add from './components/Picture/Add.jsx'
 import PicTable from './components/Picture/PicTable.jsx'
 import Update from './components/Picture/Update.jsx'
+import Signup from './components/auth/Signup.jsx';
+import Login from './components/auth/Login.jsx';
+
 
 function App() {
 
@@ -25,9 +28,10 @@ function App() {
               <Route path="/update/:id" element={<UpdateCustomer />} />
               <Route path="/picupdate/:id" element={<Update />} />
             </Route>
+            <Route path="/login" element={<Login/>}/>
           </Routes>
-          <Routes path="login" element={<div>Login</div>}/>
-          <Route path="/signup" element={<Signup />} />
+          
+          <Routes path="/signup" element={<Signup />} />
     </Router>
   );
 }

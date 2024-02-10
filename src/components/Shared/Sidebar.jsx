@@ -2,8 +2,7 @@ import React from 'react'
 import classNames from 'classnames';
 import { FcCamera } from "react-icons/fc";
 import { HiOutlineLogout } from 'react-icons/hi'
-import { useLocation } from 'react-router-dom';
-import { Link } from 'react-router-dom'
+import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { DASHBOARD_SIDEBAR_BOTTOM_LINKS, DASHBOARD_SIDEBAR_LINKS } from '../../lib/constants/navigation.jsx';
 
 const linkClass =
@@ -11,6 +10,12 @@ const linkClass =
 
 
 function Sidebar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Add your logout logic here (e.g., clearing session, redirecting to login)
+    navigate('/login'); // Redirect to the login page
+  };
   return (
     <div className="bg-neutral-900 w-60 p-3 flex flex-col text-white">
       <div className="flex items-center gap-2 px-1 py-3">
@@ -26,7 +31,7 @@ function Sidebar() {
           {DASHBOARD_SIDEBAR_BOTTOM_LINKS.map(item => (
             <SidebarLink key={item.key} item={item}/>
           ))}
-          <div className={classNames('text-red-500 cursor-pointer', linkClass )}>
+          <div className={classNames('text-red-500 cursor-pointer', linkClass )} onClick={handleLogout}>
             <span className="text-xl">
               <HiOutlineLogout />
             </span>
