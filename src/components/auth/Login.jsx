@@ -1,106 +1,74 @@
 import React, { useState } from 'react';
-import backgroundImage from '../images/Login1.jpeg'; // Import your background image
+import { Link } from 'react-router-dom';
+import { formStyles } from '../styles/styles'; // Import form styles
+
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const {loggedIn, setLoggedIn} = useState(false);
 
-  const handleLogin = () => {
-    // Add your login logic here (e.g., API calls, authentication)
-    console.log('Logging in with:', email, password);
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('https://localhost:7074/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        console.log('Login successful');
+        setLoggedIn(true);
+        // Redirect the user or perform any other action upon successful login
+      } else {
+        console.error('Login failed');
+        // Handle login failure, e.g., display an error message to the user
+      }
+    } catch (error) {
+      console.error('Error occurred during login:', error);
+      // Handle any errors that occur during the login process
+    }
   };
 
+  if(loggedIn){
+    return <Redirect to="/dashboard"/>;
+  }
+
   return (
-    <div style={styles.container}>
+    <div style={formStyles.container}>
       {/* Background Image */}
-      <div style={styles.background} />
+      <div style={formStyles.background} />
 
       {/* Login Form */}
-      <div style={styles.formContainer}>
-        <h2 style={styles.formHeading}>Login</h2>
-        <form style={styles.form}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Email:</label>
+      <div style={formStyles.formContainer}>
+        <h2 style={formStyles.formHeading}>Login</h2>
+        <form style={formStyles.form}>
+          <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>Username:</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={styles.input}
+              type="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              style={formStyles.input}
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Password:</label>
+          <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>Password:</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={styles.input}
+              style={formStyles.input}
             />
           </div>
-          <button type="button" onClick={handleLogin} style={styles.button}>Login</button>
+          <button type="button" onClick={handleLogin} style={formStyles.button}>Login</button>
+          <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
         </form>
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    position: 'relative',
-  },
-  background: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundImage: `url(${backgroundImage})`, // Apply background image
-    backgroundSize: 'cover',
-    filter: 'blur(4px)', // Apply blur effect if desired
-    zIndex: -1,
-  },
-  formContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-    textAlign: 'center',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  formGroup: {
-    marginBottom: '15px',
-  },
-  label: {
-    display: 'block',
-    textAlign: 'left',
-    marginBottom: '5px',
-  },
-  input: {
-    width: '100%',
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-  },
-  button: {
-    width: '100%',
-    padding: '10px',
-    borderRadius: '5px',
-    border: 'none',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    cursor: 'pointer',
-  },
-  formHeading: {
-    marginBottom: '20px',
-  },
 };
 
 export default Login;
