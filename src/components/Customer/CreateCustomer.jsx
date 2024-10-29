@@ -1,14 +1,28 @@
-// CreateBooking.js
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux'; // Add useSelector to import
+import { createCustomer } from '../../redux/customerSlice';
+import { selectUser } from '../../redux/userSlice'; // Correctly importing selectUser
 
 function CreateCustomer() {
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser); // Now this will work to get the user from the Redux store
   const [formData, setFormData] = useState({
     FirstName: '',
     LastName: '',
     Email: '',
     Phone: '',
+    UserId: ''
   });
+
+  useEffect(() => {
+    if (user && user.id) {
+      // Set the UserId in the form data from the logged-in user
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        UserId: user.id
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,16 +31,25 @@ function CreateCustomer() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    axios.post('https://localhost:7074/api/customer', formData)
-      .then((response) => {
-        console.log('Customer created successfully:', response.data);
-        // You can redirect or display a success message here
-      })
-      .catch((error) => {
-        console.error('Error creating booking:', error);
-        // Handle the error and display an error message
-      });
+    if (formData.UserId) {
+      dispatch(createCustomer(formData))
+        .unwrap()
+        .then(() => {
+          console.log('Customer created successfully');
+          setFormData({
+            FirstName: '',
+            LastName: '',
+            Email: '',
+            Phone: '',
+            UserId: user.id // Maintain the UserId in the form data
+          });
+        })
+        .catch((error) => {
+          console.error('Error creating customer:', error);
+        });
+    } else {
+      console.error('UserId is missing');
+    }
   };
 
   return (
@@ -36,6 +59,7 @@ function CreateCustomer() {
           Add Customer 
         </h2>
         <form onSubmit={handleSubmit} className="p-4">
+          {/* Form fields remain the same */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="FirstName">
               First Name

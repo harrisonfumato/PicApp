@@ -3,9 +3,10 @@ import axios from 'axios';
 
 function DeleteCustomer({ customerId, onDelete, customerDetails }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  // Environment variable (API base URL)
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const handleDelete = () => {
-    axios.delete(`https://localhost:7074/api/customer/${customerId}`)
+    axios.delete(`${apiBaseUrl}/api/customer/${customerId}`)
       .then(() => {
         onDelete();
         setIsModalOpen(false);

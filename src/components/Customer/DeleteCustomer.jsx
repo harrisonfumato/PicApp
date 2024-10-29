@@ -1,19 +1,23 @@
+// DeleteCustomer.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { deleteCustomer } from '../../redux/customerSlice'; // Adjust the import path as necessary
 
 function DeleteCustomer({ customerId, onDelete, customerDetails }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const handleDelete = () => {
-    axios.delete(`https://localhost:7074/api/customer/${customerId}`)
+    dispatch(deleteCustomer(customerId))
+      .unwrap()
       .then(() => {
-        onDelete();
+        onDelete(); // Optionally handle additional logic after deletion
         setIsModalOpen(false);
       })
       .catch((error) => {
-        console.error('Error deleting booking:', error);
+        console.error('Error deleting customer:', error);
       });
-  }
+  };
 
   return (
     <div>

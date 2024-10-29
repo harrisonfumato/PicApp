@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { uploadPicture } from '../../redux/pictureSlice';
 import PictureCreateForm from './PictureCreateForm';
 
 function PictureUploadForm() {
+  const dispatch = useDispatch(); // Initialize dispatch
   const [folderName, setFolderName] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
@@ -34,20 +36,14 @@ function PictureUploadForm() {
       formData.append('Files', selectedFiles[i]);
     }
 
-    axios
-      .post('https://localhost:7074/api/pictures/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+    dispatch(uploadPicture(formData))
       .then((response) => {
-        setUploadResponse(response.data);
-        setProceedToCreate(true); // Proceed to create form after successful upload
+        setUploadResponse(response.payload);
+        setProceedToCreate(true);
+        setUploading(false);
       })
-      .catch((err) => {
-        setError('Error uploading pictures. Please try again later.');
-      })
-      .finally(() => {
+      .catch((error) => {
+        setError('Upload failed.');
         setUploading(false);
       });
   };
@@ -60,20 +56,34 @@ function PictureUploadForm() {
         />
       ) : (
         <div className="container mx-auto mt-5">
-          <div className="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-md" >
+          <div className="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-md">
             <h2 className="text-2xl font-bold text-gray-800 text-center py-4">Upload Pictures</h2>
             <form className="p-4">
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">Folder Name:</label>
-                <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" value={folderName} onChange={handleFolderNameChange} />
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  type="text"
+                  value={folderName}
+                  onChange={handleFolderNameChange}
+                />
               </div>
               <div className="mb-6">
                 <label className="block text-gray-700 text-sm font-bold mb-2">Select Pictures:</label>
-                <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="file" multiple onChange={handleFileChange} />
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  type="file"
+                  multiple
+                  onChange={handleFileChange}
+                />
               </div>
               <div className="flex items-center justify-center mb-2">
-                <button className="bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-not-allowed" onClick={handleUpload} disabled={uploading}>
-                  Upload
+                <button
+                  className={`bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${uploading ? 'cursor-not-allowed' : ''}`}
+                  onClick={handleUpload}
+                  disabled={uploading}
+                >
+                  {uploading ? 'Uploading...' : 'Upload'}
                 </button>
               </div>
               {error && <p className="text-red-600">{error}</p>}

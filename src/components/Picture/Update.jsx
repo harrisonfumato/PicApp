@@ -1,12 +1,16 @@
-// UpdateBooking.j
+// Update.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { updatePicture } from '../../redux/pictureSlice'; // Adjust the path as necessary
 
-function Update({}) {
+function Update() {
   const { id } = useParams();
-  const pictureId = id; // Assuming you have a route parameter for the booking ID
+  const pictureId = id; // Assuming you have a route parameter for the picture ID
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     id: '',
     Title: '',
@@ -16,11 +20,12 @@ function Update({}) {
     Price: '',
   });
 
-const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
 
   useEffect(() => {
-    // Fetch the existing booking data when the component mounts
-    axios.get(`https://localhost:7074/api/pictures/${pictureId}`)
+    // Fetch the existing picture data when the component mounts
+    axios.get(`${apiBaseUrl}/api/pictures/${pictureId}`)
       .then((response) => {
         const pictureData = response.data;
         setFormData({
@@ -45,21 +50,22 @@ const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.put(`https://localhost:7074/api/pictures/${pictureId}`, formData)
+    axios.put(`${apiBaseUrl}/api/pictures/${pictureId}`, formData)
       .then((response) => {
         console.log('Picture updated successfully:', response.data);
-        // Redirect or display a success message
-        navigate('/pictable');
+        dispatch(updatePicture(response.data)); // Dispatch the update action
+        navigate('/pictable'); // Redirect after update
       })
       .catch((error) => {
         console.error('Error updating picture:', error);
-        // Handle the error and display an error message
       });
   };
 
   const handlePartialUpdateSuccess = (updateData) => {
     console.log('Partial update succeeded:', updateData);
-  }
+    dispatch(updatePicture(updateData)); // Dispatch the update action
+    setShowPartialUpdateForm(false); // Close the partial update form
+  };
 
   return (
     <div className="container mx-auto mt-5">
@@ -96,7 +102,7 @@ const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
           </div>
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ImageUrl">
-              ImageUrl
+              Image URL
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -109,7 +115,7 @@ const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ImageUrl">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="DownloadUrl">
               Download Link
             </label>
             <input
@@ -141,20 +147,25 @@ const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Update 
+              Update
             </button>
           </div>
         </form>
         <div className="flex items-center justify-center">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shodow-outline"
-          type="button"
-          onClick={() => setShowPartialUpdateForm(true)}>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="button"
+            onClick={() => setShowPartialUpdateForm(true)}
+          >
             Update Partial
           </button>
         </div>
-        {showPartialUpdateForm && (<PartialUpdatePicture
-          pictureId={picturerId}
-          onSuccess={handlePartialUpdateSuccess}/>)}
+        {showPartialUpdateForm && (
+          <PartialUpdatePicture
+            pictureId={pictureId}
+            onSuccess={handlePartialUpdateSuccess}
+          />
+        )}
       </div>
     </div>
   );

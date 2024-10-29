@@ -1,6 +1,9 @@
+// src/components/auth/Signup.jsx
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-import { formStyles } from '../styles/styles'; // Import form styles
+import { Link } from 'react-router-dom';
+import { formStyles } from '../styles/styles';
+import { useDispatch } from 'react-redux';
+import { setItems } from '../../redux/dataSlice'; // Import the action
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -8,10 +11,12 @@ const Signup = () => {
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const dispatch = useDispatch(); // Hook to dispatch actions
 
   const handleSignup = async () => {
     try {
-      const response = await fetch('https://localhost:7074/signup', {
+      const response = await fetch(`${apiBaseUrl}/api/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,8 +34,9 @@ const Signup = () => {
         throw new Error('Sign up failed');
       }
 
-      // Sign up successful, you can redirect or perform any other action here
+      const data = await response.json();
       console.log('Signup successful');
+      dispatch(setItems(data)); // Dispatch action to update Redux store
     } catch (error) {
       console.error('Error signing up:', error.message);
     }
@@ -38,10 +44,7 @@ const Signup = () => {
 
   return (
     <div style={formStyles.container}>
-      {/* Background Image */}
       <div style={formStyles.background} />
-
-      {/* Signup Form */}
       <div style={formStyles.formContainer}>
         <h2 style={formStyles.formHeading}>Signup</h2>
         <form style={formStyles.form}>
@@ -91,7 +94,7 @@ const Signup = () => {
             />
           </div>
           <button type="button" onClick={handleSignup} style={formStyles.button}>Signup</button>
-          <p>Already have an account? <Link to="/">Login</Link></p> {/* Link to login page */}
+          <p>Already have an account? <Link to="/">Login</Link></p>
         </form>
       </div>
     </div>

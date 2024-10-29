@@ -1,62 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import DeleteCustomer from './DeleteCustomer';
+// ListCustomers.jsx
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCustomers } from '../../redux/customerSlice'; // Adjust the import path as necessary
+import DeleteCustomer from './DeleteCustomer'; // Adjust the import path as necessary
 
 function ListCustomers() {
-  const [customers, setCustomer] = useState([]);
-  const [deletedSuccess, setDeletedSuccess] = useState(false);
+  const dispatch = useDispatch();
+  const { list: customers, loading, error } = useSelector((state) => state.customers);
 
   useEffect(() => {
-    axios.get('https://localhost:7074/api/customer')
-      .then((response) => {
-        setCustomer(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching customers:', error);
-      });
-  }, []);
+    dispatch(fetchCustomers());
+  }, [dispatch]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  const handleDelete = () => {
+    dispatch(fetchCustomers()); // Refresh customer list after deletion
+  };
 
   return (
-    <div className="container mx-auto main-content"> {/* Added main-content class */}
-      <h2 className="text-2xl font-bold mb-4">Customer List</h2>
-      {deletedSuccess && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-          <strong className="font-bold">Success!</strong>
-          <span className="black sm:inline ml-2">Customer was successfully deleted.</span>
-        </div>
-      )}
-      
-      <table className="min-w-full table-auto">
+    <div>
+      <h2 className="text-2xl font-bold text-gray-800 text-center py-4">Customer List</h2>
+      <table className="min-w-full bg-white">
         <thead>
           <tr>
-            <th className="px-4 py-2">ID</th>
-            <th className="px-4 py-2">First Name</th>
-            <th className="px-4 py-2">Last Name</th>
-            <th className="px-4 py-2">Email</th>
-            <th className="px-4 py-2">Phone</th>
-            <th className="px-4 py-2">Actions</th>
+            <th className="py-2 px-4 border-b">First Name</th>
+            <th className="py-2 px-4 border-b">Last Name</th>
+            <th className="py-2 px-4 border-b">Email</th>
+            <th className="py-2 px-4 border-b">Phone No.</th>
+            <th className="py-2 px-4 border-b">Actions</th>
           </tr>
         </thead>
         <tbody>
           {customers.map((customer) => (
             <tr key={customer.customerId}>
-              <td className="border px-4 py-2">{customer.customerId}</td>
-              <td className="border px-4 py-2">{customer.firstName}</td>
-              <td className="border px-4 py-2">{customer.lastName}</td>
-              <td className="border px-4 py-2">{customer.email}</td>
-              <td className="border px-4 py-2">{customer.phone}</td>
-              <td className="border px-4 py-2">
-                <Link to={`/update/${customer.customerId}`} className="text-blue-500 hover:text-blue-700">
-                  Update
-                </Link> |
-                <DeleteCustomer
-                  customerId={customer.customerId}
-                  onDelete={() => {
-                    setDeletedSuccess(true);
-                  }}
-                  customerDetails={customer}
-                />
+              <td className="py-2 px-4 border-b">{customer.firstName}</td>
+              <td className="py-2 px-4 border-b">{customer.lastName}</td>
+              <td className="py-2 px-4 border-b">{customer.email}</td>
+              <td className="py-2 px-4 border-b">{customer.phone}</td>
+              <td className="py-2 px-4 border-b">
+                <DeleteCustomer customerId={customer.customerId} onDelete={handleDelete} customerDetails={customer} />
               </td>
             </tr>
           ))}

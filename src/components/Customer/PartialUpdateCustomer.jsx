@@ -1,30 +1,35 @@
-// PartialUpdateBooking.js
+// PartialUpdateCustomer.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import { applyOperation } from 'fast-json-patch';
 
 function PartialUpdateCustomer({ customerId, onSuccess }) {
   const [formData, setFormData] = useState({
     FirstName: '',
   });
 
+  // Environment variable (API base URL)
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const patchDocument = [ {
-        op: 'replace', path: '/FirstName', value: formData.FirstName },
-    ];
-    axios.patch(`https://localhost:7271/api/HotelBooking/UpdatePartial/${customerId}`, patchDocument)
+    const patchDocument = [{
+      op: 'replace',
+      path: '/FirstName',
+      value: formData.FirstName,
+    }];
+
+    axios.patch(`${apiBaseUrl}/api/HotelBooking/UpdatePartial/${customerId}`, patchDocument)
       .then((response) => {
-        console.log('customer partially updated successfully:', response.data);
-        // Trigger a callback (onSuccess) or handle the success as needed
-        
+        console.log('Customer partially updated successfully:', response.data);
         if (onSuccess) {
           onSuccess(response.data);
         }
+        // Reset form after success
+        setFormData({ FirstName: '' });
       })
       .catch((error) => {
-        console.error('Error customer booking partially:', error);
-        // Handle the error and display an error message
+        console.error('Error updating customer partially:', error);
+        // Handle error display logic here
       });
   };
 
@@ -46,7 +51,7 @@ function PartialUpdateCustomer({ customerId, onSuccess }) {
       </div>
       <div className="flex items-center justify-center">
         <button
-          className="bg-blue-500 hover-bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit"
         >
           Update 

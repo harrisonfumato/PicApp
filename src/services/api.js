@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_URL = 'https://localhost:7271'; // Replace with your API endpoint
+const API_URL = 'http://localhost:5020'; // Replace with your API endpoint
 
 export const getAllBookings = () => axios.get(`${API_URL}/bookings`);
 export const getBookingById = (id) => axios.get(`${API_URL}/bookings/${id}`);

@@ -1,13 +1,18 @@
+// Delete.js
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import { deletePicture } from '../../redux/pictureSlice.js';
 
-function Delete({ pictureId, onDelete, pictureDetails }) {
+function Delete({ pictureId, pictureDetails }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleDelete = () => {
-    axios.delete(`https://localhost:7074/api/pictures/${pictureId}`)
+    axios.delete(`${apiBaseUrl}/api/pictures/${pictureId}`)
       .then(() => {
-        onDelete();
+        dispatch(deletePicture(pictureId)); // Dispatch the action to update Redux state
         setIsModalOpen(false);
       })
       .catch((error) => {
@@ -31,11 +36,11 @@ function Delete({ pictureId, onDelete, pictureDetails }) {
             <p className="text-xl mb-4">Confirm Deletion</p>
             {pictureDetails && (
               <div className="mb-4">
-                <p>Piture Details:</p>
+                <p>Picture Details:</p>
                 <p>ID: {pictureDetails.pictureId}</p>
                 <p>Title: {pictureDetails.title}</p>
                 <p>Description: {pictureDetails.description}</p>
-                <p>Picture: {pictureDetails.imageUrl}</p>
+                <p>Picture: <img src={pictureDetails.imageUrl} alt={pictureDetails.title} className="w-full h-auto" /></p>
                 <p>Price: {pictureDetails.price}</p>
               </div>
             )}

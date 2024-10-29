@@ -6,9 +6,10 @@ import DeleteCustomer from './Customer/DeleteCustomer';
 function ListCustomers() {
   const [customers, setCustomer] = useState([]);
   const [deletedSuccess, setDeletedSuccess] = useState(false);
-
+  // Environment variable (API base URL)
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
-    axios.get('https://localhost:7074/api/customer')
+    axios.get(`${apiBaseUrl}/api/customer`)
       .then((response) => {
         setCustomer(response.data);
       })
