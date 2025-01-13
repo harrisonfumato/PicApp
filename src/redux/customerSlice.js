@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5020';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // Helper function to get token from localStorage or sessionStorage
 const getToken = () => localStorage.getItem('token'); // or sessionStorage.getItem('token');
