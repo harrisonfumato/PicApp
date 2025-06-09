@@ -61,7 +61,7 @@ const Login = ({ onLogin }) => {
     const { credential } = credentialResponse;
 
     try {
-      const res = await fetch(`${apiBaseUrl}/api/auth/google`, {
+      const res = await fetch(`${apiBaseUrl}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

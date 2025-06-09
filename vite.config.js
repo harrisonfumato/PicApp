@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://localhost:7271', // Update with your API URL
+        target: 'https://picsellbackend-a4f4g6frc4aab9ew.centralus-01.azurewebsites.net/', // Update with your API URL
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
