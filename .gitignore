@@ -1,5 +1,3 @@
 /secrets/gcp-service.account.json
 node_modules/
 dist/
-dist/
-dist/
