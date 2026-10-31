@@ -18,7 +18,7 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
+      const response = await fetch(`${apiBaseUrl}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ const Login = ({ onLogin }) => {
     const { credential } = credentialResponse;
 
     try {
-      const res = await fetch(`${apiBaseUrl}/api/auth/login`, {
+      const res = await fetch(`${apiBaseUrl}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
