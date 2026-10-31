@@ -16,11 +16,13 @@ function UpdateCustomer({}) {
     Phone: '',
   });
 
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
 
   useEffect(() => {
     // Fetch the existing booking data when the component mounts
-    axios.get(`https://localhost:7074/api/customer/${customerId}`)
+    axios.get(`${apiBaseUrl}/api/customer/${customerId}`)
       .then((response) => {
         const customerData = response.data;
         setFormData({
@@ -44,7 +46,7 @@ const [showPartialUpdateForm, setShowPartialUpdateForm] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.put(`https://localhost:7074/api/customer/Update/${customerId}`, formData)
+    axios.put(`${apiBaseUrl}/api/customer/Update/${customerId}`, formData)
       .then((response) => {
         console.log('Customer updated successfully:', response.data);
         // Redirect or display a success message
