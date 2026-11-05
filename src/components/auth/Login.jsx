@@ -16,7 +16,7 @@ const Login = ({ onLogin }) => {
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch(`${apiBaseUrl}/login`, {
