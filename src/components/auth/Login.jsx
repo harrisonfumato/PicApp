@@ -17,6 +17,7 @@ const Login = ({ onLogin }) => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleLogin = async () => {
+    e.preventDefault();
     try {
       const response = await fetch(`${apiBaseUrl}/login`, {
         method: 'POST',
@@ -61,7 +62,7 @@ const Login = ({ onLogin }) => {
     const { credential } = credentialResponse;
 
     try {
-      console.log("PAYLOAD BEING SENT TO BACKEND:", JSON.stringify({ username, password }));
+      console.log("PAYLOAD BEING SENT TO BACKEND:", JSON.stringify({ id_token: credential }));
       const res = await fetch(`${apiBaseUrl}/login`, {
         method: 'POST',
         headers: {
@@ -110,7 +111,7 @@ const Login = ({ onLogin }) => {
       <div style={formStyles.formContainer}>
         <h2 style={formStyles.formHeading}>Login</h2>
         {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-        <form style={formStyles.form}>
+        <form onSubmit={handleLogin} style={formStyles.form}>
           <div style={formStyles.formGroup}>
             <label style={formStyles.label}>Username:</label>
             <input
@@ -129,7 +130,7 @@ const Login = ({ onLogin }) => {
               style={formStyles.input}
             />
           </div>
-          <button type="button" onClick={handleLogin} style={formStyles.button}>Login</button>
+          <button type="submit" style={formStyles.button}>Login</button>
           <p>Don't have an account? <a href="/signup">Sign up</a></p>
           <GoogleLogin
             onSuccess={handleGoogleResponse}
