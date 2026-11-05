@@ -17,6 +17,8 @@ function Header() {
   console.log('User data from Redux:', user);
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     dispatch(logout());
     navigate('/');
   };

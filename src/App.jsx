@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ListCustomers from './components/Customer/ListCustomers.jsx';
 import Layout from './components/Shared/Layout.jsx';
@@ -14,8 +14,20 @@ import Login from './components/auth/Login.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Provider } from 'react-redux';
 import store from '../src/redux/store.js'; // Import the store here
+import { useDispatch } from 'react-redux';
+import { setUser } from './redux/userSlice';
+
+const isTokenValid = (t) => {
+  try {
+    const { exp } = JSON.parse(atob(t.split('.')[1]));
+    return exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+};
 
 function App() {
+  const dispatch = useDispatch();
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Set based on auth mechanism
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -24,6 +36,10 @@ function App() {
     setIsLoggedIn(true);
   };
 
+  useEffect(() => {
+    const saved = localStorage.getItem('user');
+    if (saved && isLoggedIn) dispatch(setUser(JSON.parse(saved)));
+  }, [dispatch, isLoggedIn]);
   return (
 
     <Provider store={store}>

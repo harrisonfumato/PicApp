@@ -15,7 +15,16 @@ const Login = ({ onLogin }) => {
   const dispatch = useDispatch(); // Hook to dispatch actions
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
+  const saveSession = (data) => {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify({
+      username: data.username,
+      name: data.name,
+      email: data.email,
+      subdomain: data.subdomain,
+      token: data.token,
+    }));
+  };
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -32,7 +41,7 @@ const Login = ({ onLogin }) => {
         console.log('Login successful');
         // Store JWT token if returned
         if (data.token) {
-          localStorage.setItem('token', data.token);
+          saveSession(data);
           console.log("Token is:", data.token);
           setLoggedIn(true);
           setError('');
@@ -76,7 +85,7 @@ const Login = ({ onLogin }) => {
         console.log('Google login successful');
         // Store JWT token if returned
         if (data.token) {
-          localStorage.setItem('token', data.token);
+          saveSession(data);
           console.log("Token is:", data.token);
         }
         setLoggedIn(true);
