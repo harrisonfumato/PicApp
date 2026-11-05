@@ -62,7 +62,7 @@ const Login = ({ onLogin }) => {
     const { credential } = credentialResponse;
 
     try {
-      console.log("PAYLOAD BEING SENT TO BACKEND:", JSON.stringify({ id_token: credential }));
+      
       const res = await fetch(`${apiBaseUrl}/login`, {
         method: 'POST',
         headers: {
