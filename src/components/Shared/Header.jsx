@@ -1,33 +1,43 @@
 import React, { Fragment, useState } from 'react';
+import { AuthContext } from '../../components/auth/AuthContext.jsx';
+import { GoogleOAuthProvider, googleLogout } from '@react-oauth/google';
 import { HiOutlineSearch } from 'react-icons/hi';
 import { Transition, Menu } from '@headlessui/react';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import UserDetail from '../../components/Shared/UserDetails.jsx';
 import { useSelector } from 'react-redux';
-import { logout, selectSubdomain } from '../../redux/userSlice';
+import { logout, selectSubdomain, logout as logoutAction } from '../../redux/userSlice';
 import { useDispatch } from 'react-redux';
 
 function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { logout: contextLogout } = useContext(AuthContext);
+
   const [isUserDetailOpen, setUserDetailOpen] = useState(false);
   const user = useSelector((state) => state.user.currentUser);
   const subdomain = useSelector(selectSubdomain);
   console.log('User data from Redux:', user);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    googleLogout();
+    contextLogout();
+    /*localStorage.removeItem('token');
     localStorage.removeItem('user');
+    dispatch(logoutAction());
+    setIsLoggedIn(false);
     dispatch(logout());
     navigate('/');
+    window.location.href = '/';*/
   };
 
   const toggleUserDetail = () => {
     setUserDetailOpen((prevState) => !prevState);
   };
 
-  console.log('User data in Header:', user);
+  //console.log('User data in Header:', user);
 
   return (
     <div className="bg-white h-16 px-4 flex items-center border-b border-gray-200 justify-between">

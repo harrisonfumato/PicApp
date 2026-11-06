@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthContext } from './components/auth/AuthContext.jsx';
 import ListCustomers from './components/Customer/ListCustomers.jsx';
 import Layout from './components/Shared/Layout.jsx';
 import CreateCustomer from './components/Customer/CreateCustomer.jsx';
@@ -15,7 +16,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Provider } from 'react-redux';
 import store from '../src/redux/store.js'; // Import the store here
 import { useDispatch } from 'react-redux';
-import { setUser } from './redux/userSlice';
+import { setUser, logout as logoutAction } from './redux/userSlice';
+
 
 const isTokenValid = (t) => {
   try {
@@ -28,12 +30,24 @@ const isTokenValid = (t) => {
 
 function App() {
   const dispatch = useDispatch();
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Set based on auth mechanism
+
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    const token = localStorage.getItem('token');
+    return !!token && isTokenValid(token);
+  }); // Set based on auth mechanism
+  
 
   // Function to handle global login state
   const handleLogin = () => {
     setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutAction());
+    localStorage.removeItem('token'); // Optional: cleans token on logout
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
   };
 
   useEffect(() => {
@@ -42,7 +56,7 @@ function App() {
   }, [dispatch, isLoggedIn]);
   return (
 
-    <Provider store={store}>
+    <AuthContext.Provider value={{ logout: handleLogout }}>
       <GoogleOAuthProvider clientId={googleClientId}>
         <Router>
           <Routes>
@@ -72,7 +86,7 @@ function App() {
           </Routes>
         </Router>
       </GoogleOAuthProvider>
-    </Provider>
+    </AuthContext.Provider>
   );
 }
 
