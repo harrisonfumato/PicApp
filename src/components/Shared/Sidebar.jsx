@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useContext} from 'react'
+import { AuthContext } from '../../components/auth/AuthContext.jsx';
+import { GoogleOAuthProvider, googleLogout } from '@react-oauth/google';
 import classNames from 'classnames';
 import { FcCamera } from "react-icons/fc";
 import { HiOutlineLogout } from 'react-icons/hi'
 import { useLocation, Link, useNavigate } from 'react-router-dom'
 import { DASHBOARD_SIDEBAR_BOTTOM_LINKS, DASHBOARD_SIDEBAR_LINKS } from '../../lib/constants/navigation.jsx';
+
 
 const linkClass =
 	'flex items-center gap-2 font-light px-3 py-2 hover:bg-neutral-700 hover:no-underline active:bg-neutral-600 rounded-sm text-base'
@@ -12,9 +15,11 @@ const linkClass =
 function Sidebar() {
   const navigate = useNavigate();
 
+  const { logout: contextLogout } = useContext(AuthContext);
+
   const handleLogout = () => {
-    // Add your logout logic here (e.g., clearing session, redirecting to login)
-    navigate('/login'); // Redirect to the login page
+    googleLogout();
+    contextLogout();
   };
   return (
     <div className="bg-neutral-900 w-60 p-3 flex flex-col text-white">
