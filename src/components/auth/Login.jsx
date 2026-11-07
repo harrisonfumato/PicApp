@@ -47,10 +47,11 @@ const Login = ({ onLogin }) => {
           setLoggedIn(true);
           setError('');
           dispatch(setItems(data)); // Dispatch action to update Redux store
-          dispatch(setUser({ subdomain: data.subdomain,username: data.username, token: data.token })); // Dispatch action to update Redux store (user)
+          dispatch(setUser({ userId: data.userId, subdomain: data.subdomain,username: data.username, token: data.token })); // Dispatch action to update Redux store (user)
           // Set user details
           // Construct userDetails object
           const userDetails = {
+            //userId: data.userId || 'N/A',
             name: data.name || 'N/A',  // Use 'N/A' or any fallback if data is missing
             email: data.email || 'N/A',
             username: data.username || 'N/A'
@@ -93,6 +94,7 @@ const Login = ({ onLogin }) => {
         dispatch(setItems(data)); // Dispatch action to update Redux store
         dispatch(setUser({ subdomain: data.subdomain,username: data.username, name: data.name, email: data.email ,token: data.token, userId: data.userId })); // Dispatch action to update Redux store (user)
         const userDetails = {
+          //userId: data.userId || 'N/A',
           name: data.name || 'N/A',  // Use 'N/A' or any fallback if data is missing
           email: data.email || 'N/A',
           username: data.username || 'N/A'
