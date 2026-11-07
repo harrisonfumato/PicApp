@@ -18,6 +18,7 @@ const Login = ({ onLogin }) => {
   const saveSession = (data) => {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify({
+      userId: data.userId,
       username: data.username,
       name: data.name,
       email: data.email,
@@ -90,7 +91,7 @@ const Login = ({ onLogin }) => {
         }
         setLoggedIn(true);
         dispatch(setItems(data)); // Dispatch action to update Redux store
-        dispatch(setUser({ subdomain: data.subdomain,username: data.username, name: data.name, email: data.email ,token: data.token })); // Dispatch action to update Redux store (user)
+        dispatch(setUser({ subdomain: data.subdomain,username: data.username, name: data.name, email: data.email ,token: data.token, userId: data.userId })); // Dispatch action to update Redux store (user)
         const userDetails = {
           name: data.name || 'N/A',  // Use 'N/A' or any fallback if data is missing
           email: data.email || 'N/A',
