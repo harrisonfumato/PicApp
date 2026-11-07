@@ -15,11 +15,11 @@ function CreateCustomer() {
   });
 
   useEffect(() => {
-    if (user && user.id) {
+    if (user && user.userId) {
       // Set the UserId in the form data from the logged-in user
       setFormData((prevFormData) => ({
         ...prevFormData,
-        UserId: user.id
+        UserId: user.userId
       }));
     }
   }, [user]);
