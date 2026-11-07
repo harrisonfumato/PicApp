@@ -38,7 +38,7 @@ const Login = ({ onLogin }) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Login successful');
+        //console.log('Login successful');
         // Store JWT token if returned
         if (data.token) {
           saveSession(data);
