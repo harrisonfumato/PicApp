@@ -70,7 +70,7 @@ function PictureCreateForm({ imageUrl }) {
               id="DownloadUrl"
               type="text"
               name="DownloadUrl"
-              value={formData.DownloadUrl}
+              value={formData.imageUrl}
               onChange={handleChange}
               required
             />
