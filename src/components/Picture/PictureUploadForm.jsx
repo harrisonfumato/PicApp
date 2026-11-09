@@ -43,7 +43,7 @@ function PictureUploadForm() {
         setUploading(false);
       })
       .catch((error) => {
-        setError('Upload failed.');
+        setError('Upload failed:', error);
         setUploading(false);
       });
   };
