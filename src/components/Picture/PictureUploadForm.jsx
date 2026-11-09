@@ -42,7 +42,7 @@ function PictureUploadForm() {
       .then((payload) => {
         // Double check payload structure before allowing step progression
         if(payload && Array.isArray(payload) && payload.length > 0){
-          setUploadResponse(response.payload);
+          setUploadResponse(payload);
           setProceedToCreate(true);
         }else{
           setError('Unexpected server response format.');
