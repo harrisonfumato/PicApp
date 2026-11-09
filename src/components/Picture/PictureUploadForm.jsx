@@ -35,15 +35,24 @@ function PictureUploadForm() {
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append('Files', selectedFiles[i]);
     }
-
+    
+    // Use .unwrap() to cleanly force rejection errors into the catch block
     dispatch(uploadPicture(formData))
-      .then((response) => {
-        setUploadResponse(response.payload);
-        setProceedToCreate(true);
+      .unwrap()
+      .then((payload) => {
+        // Double check payload structure before allowing step progression
+        if(payload && Array.isArray(payload) && payload.length > 0){
+          setUploadResponse(response.payload);
+          setProceedToCreate(true);
+        }else{
+          setError('Unexpected server response format.');
+        }
+        
         setUploading(false);
       })
       .catch((error) => {
-        setError('Upload failed:', error);
+        // Redux rejected errors will now correctly hit this block
+        setError(error?.message || 'Upload failed. Please try again');
         setUploading(false);
       });
   };
