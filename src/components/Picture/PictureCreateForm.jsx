@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust import path
 
-function PictureCreateForm({ imageUrl, DownloadUrl }) {
+// 1. Accept 'url' instead of 'DownloadUrl' to match backend casing
+function PictureCreateForm({ imageUrl, url }) {
   const dispatch = useDispatch();
-  console.log("DownloadUrl:", DownloadUrl)
+  console.log("Passed URL:", url)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     imageUrl: imageUrl, // Prepopulate with uploaded image URL
     price: '',
     folderName: '',
-    DownloadUrl: DownloadUrl,
+    DownloadUrl: url || "",// 2. Fallback to empty string if undefined
   });
   const [error, setError] = useState(null);
 
@@ -22,7 +23,7 @@ function PictureCreateForm({ imageUrl, DownloadUrl }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.description || !formData.price || !formData.DownloadUrl) {
+    if (!formData.title || !formData.description || !formData.price ) {
       setError('Please fill in all fields');
       return;
     }
@@ -71,7 +72,7 @@ function PictureCreateForm({ imageUrl, DownloadUrl }) {
               id="DownloadUrl"
               type="text"
               name="DownloadUrl"
-              value={formData.DownloadUrl}
+              value={formData.url}
               onChange={handleChange}
               required
             />

@@ -41,7 +41,7 @@ function PictureUploadForm() {
       .unwrap()
       .then((payload) => {
         // Double check payload structure before allowing step progression
-        if(payload && Array.isArray(payload) && payload.length > 0){
+        if(payload && payload.folderUrl && Array.isArray(payload) && payload.length > 0){
           setUploadResponse(payload);
           setProceedToCreate(true);
         }else{
@@ -62,6 +62,7 @@ function PictureUploadForm() {
       {proceedToCreate ? (
         <PictureCreateForm
           imageUrl={uploadResponse[0].url} // Assuming the first URL is the one you want to use
+          url={uploadResponse.folderUrl} // Pass the folder URL directly
         />
       ) : (
         <div className="container mx-auto mt-5">
