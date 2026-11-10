@@ -23,7 +23,7 @@ function PictureCreateForm({ imageUrl, url }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.description || !formData.price ) {
+    if (!formData.title || !formData.description || !formData.price || formData.DownloadUrl) {
       setError('Please fill in all fields');
       return;
     }
@@ -41,6 +41,12 @@ function PictureCreateForm({ imageUrl, url }) {
     <div className="container mx-auto mt-5">
       <div className="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-md">
         <h2 className="text-2xl font-bold text-gray-800 text-center py-4">Create Picture</h2>
+        {/* Visual feedback showing the photographer a preview of what they uploaded */}
+        {imageUrl && (
+          <div className="px-6 pt-2">
+            <img src={imageUrl} alt="Preview" className="w-full h-48 object-cover rounded shadow-inner" />
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="p-6">
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Title:</label>

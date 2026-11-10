@@ -41,7 +41,7 @@ function PictureUploadForm() {
       .unwrap()
       .then((payload) => {
         // Double check payload structure before allowing step progression
-        if(payload && payload.folderUrl && Array.isArray(payload) && payload.length > 0){
+        if(payload && payload.folderUrl && Array.isArray(payload.files)  && payload.files.length > 0){
           setUploadResponse(payload);
           setProceedToCreate(true);
         }else{
@@ -61,7 +61,8 @@ function PictureUploadForm() {
     <div>
       {proceedToCreate ? (
         <PictureCreateForm
-          imageUrl={uploadResponse[0].url} // Assuming the first URL is the one you want to use
+        // Extract the preview image thumbnail from the first object inside the files array
+          imageUrl={uploadResponse.files[0]?.url}
           url={uploadResponse.folderUrl} // Pass the folder URL directly
         />
       ) : (
