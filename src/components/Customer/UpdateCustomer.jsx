@@ -21,7 +21,7 @@ function UpdateCustomer() {
 
   useEffect(() => {
     // Fetch the existing customer data when the component mounts
-    axios.get(`${apiBaseUrl}/api/customer/${id}`)
+    axios.get(`${apiBaseUrl}/api/customer/update/${id}`)
       .then((response) => {
         const customerData = response.data;
         setFormData({
