@@ -4,6 +4,7 @@ import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust impor
 
 function PictureCreateForm({ imageUrl, DownloadUrl }) {
   const dispatch = useDispatch();
+  console.log("DownloadUrl:", DownloadUrl)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -21,7 +22,7 @@ function PictureCreateForm({ imageUrl, DownloadUrl }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.description || !formData.price) {
+    if (!formData.title || !formData.description || !formData.price || !formData.DownloadUrl) {
       setError('Please fill in all fields');
       return;
     }
