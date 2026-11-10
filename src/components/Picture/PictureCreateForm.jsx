@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust import path
 
@@ -31,7 +31,7 @@ function PictureCreateForm({ imageUrl, url }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.description || !formData.price || formData.DownloadUrl) {
+    if (!formData.title || !formData.description || !formData.price || !formData.DownloadUrl) {
       setError('Please fill in all fields');
       return;
     }
