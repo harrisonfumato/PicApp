@@ -10,7 +10,7 @@ function PictureCreateForm({ imageUrl }) {
     imageUrl: imageUrl, // Prepopulate with uploaded image URL
     price: '',
     folderName: '',
-    DownloadUrl: '',
+    DownloadUrl: DownloadUrl,
   });
   const [error, setError] = useState(null);
 
@@ -70,7 +70,7 @@ function PictureCreateForm({ imageUrl }) {
               id="DownloadUrl"
               type="text"
               name="DownloadUrl"
-              value={formData.imageUrl}
+              value={formData.DownloadUrl}
               onChange={handleChange}
               required
             />
