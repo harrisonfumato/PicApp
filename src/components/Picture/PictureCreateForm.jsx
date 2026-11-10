@@ -82,13 +82,15 @@ function PictureCreateForm({ imageUrl, url }) {
               Download Link
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
               id="DownloadUrl"
               type="text"
               name="DownloadUrl"
               value={formData.DownloadUrl}
               onChange={handleChange}
               required
+              disabled
+              readOnly          // better UX than disabled
             />
           </div>
           <div className="mb-4">
