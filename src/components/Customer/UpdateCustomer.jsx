@@ -44,7 +44,7 @@ function UpdateCustomer() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.put(`${apiBaseUrl}/api/customer/Update/${id}`, formData)
+    axios.put(`${apiBaseUrl}/api/customer/${id}`, formData)
       .then((response) => {
         console.log('Customer updated successfully:', response.data);
         navigate('/customers');
