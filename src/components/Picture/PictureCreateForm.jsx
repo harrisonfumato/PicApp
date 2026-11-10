@@ -6,6 +6,8 @@ import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust impor
 function PictureCreateForm({ imageUrl, url }) {
   const dispatch = useDispatch();
   console.log("Passed URL:", url)
+  const [error, setError] = useState(null);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -14,8 +16,14 @@ function PictureCreateForm({ imageUrl, url }) {
     folderName: '',
     DownloadUrl: url || "",// 2. Fallback to empty string if undefined
   });
-  const [error, setError] = useState(null);
 
+  // Safety synchronization hook: ensures state updates if props arrive slightly delayed
+  useEffect(() => {
+    if (url) {
+      setFormData(prev => ({ ...prev, DownloadUrl: url }));
+    }
+  }, [url]);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -78,7 +86,7 @@ function PictureCreateForm({ imageUrl, url }) {
               id="DownloadUrl"
               type="text"
               name="DownloadUrl"
-              value={formData.url}
+              value={formData.DownloadUrl}
               onChange={handleChange}
               required
             />
