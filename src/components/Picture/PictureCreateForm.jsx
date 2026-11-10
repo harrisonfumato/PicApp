@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust import path
 
-function PictureCreateForm({ imageUrl }) {
+function PictureCreateForm({ imageUrl, DownloadUrl }) {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     title: '',
