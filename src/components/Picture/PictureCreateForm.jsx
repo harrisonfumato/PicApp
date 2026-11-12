@@ -13,6 +13,10 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files, folder
   
   const [formError, setFormError] = useState(null);
 
+  // Declare these before using them in validaton or this payload
+  const price = Number(formData.price);
+  const selectedCustomerId = Number(formData.customerId);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -71,7 +75,7 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files, folder
       ...formData,
       title: formData.title.trim(),
       description: formData.description.trim(),
-      price,
+      price: price,
       customerId: selectedCustomerId,
       publicIds: [...formData.publicIds],
     }
