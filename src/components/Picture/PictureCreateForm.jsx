@@ -4,7 +4,7 @@ import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust impor
 import { fetchCustomers } from '../../redux/customerSlice'; // Adjust the import path as necessary
 
 // 1. Accept 'url' instead of 'DownloadUrl' to match backend casing
-function PictureCreateForm({ imageUrl, url, customerId}) {
+function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
   const dispatch = useDispatch();
   console.log("Passed URL:", url) 
 
@@ -21,6 +21,7 @@ function PictureCreateForm({ imageUrl, url, customerId}) {
     folderName: '',
     DownloadUrl: url || "",// 2. Fallback to empty string if undefined
     customerId: customerId || '', //Store the selectd customer ID
+    PublicIds: publicIds || [], // Save all cloudinary publicIds
   });
 
   useEffect(() => {
@@ -34,9 +35,10 @@ function PictureCreateForm({ imageUrl, url, customerId}) {
       setFormData(prev => ({ ...prev, 
         ...(url && { DownloadUrl: url }),
         ...(imageUrl && { imageUrl }),
-        ...(customerId && { customerId })}));
+        ...(customerId && { customerId}),
+        ...(publicIds && { publicIds }), }));
     }
-  }, [url, imageUrl, customerId ]);
+  }, [url, imageUrl, customerId, publicIds ]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +49,8 @@ function PictureCreateForm({ imageUrl, url, customerId}) {
     e.preventDefault();
     setFormError(null);
     if (!formData.title || !formData.description ||
-       !formData.price || !formData.DownloadUrl || !formData.customerId ) {
+       !formData.price || !formData.DownloadUrl || 
+       !formData.customerId || !formData.publicIds ) {
       setError('Please fill in all fields and select a customer');
       return;
     }

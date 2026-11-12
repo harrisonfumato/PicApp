@@ -64,6 +64,8 @@ function PictureUploadForm() {
         // Extract the preview image thumbnail from the first object inside the files array
           imageUrl={uploadResponse.files[0]?.url}
           url={uploadResponse.folderUrl} // Pass the folder URL directly
+          publicIds={uploadResponse.files.map((file) => file.publicId).join(",")} // Array of all pulicIds
+          files={uploadResponse.files}  // Optional: pass full array of { publicId, url } if you need publicIds later
         />
       ) : (
         <div className="container mx-auto mt-5">
