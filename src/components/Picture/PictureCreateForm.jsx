@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust import path
+import { fetchCustomers } from '../../redux/customerSlice'; // Adjust the import path as necessary
 
 // 1. Accept 'url' instead of 'DownloadUrl' to match backend casing
-function PictureCreateForm({ imageUrl, url }) {
+function PictureCreateForm({ imageUrl, url, customerId}) {
   const dispatch = useDispatch();
-  console.log("Passed URL:", url)
-  const [error, setError] = useState(null);
+  console.log("Passed URL:", url) 
+
+  const { list: customers, loading: customersLoading, error: customersError } = useSelector((state) => state.customers);
+
+  
+  const [formError, setFormError] = useState(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -15,14 +20,23 @@ function PictureCreateForm({ imageUrl, url }) {
     price: '',
     folderName: '',
     DownloadUrl: url || "",// 2. Fallback to empty string if undefined
+    customerId: customerId || '', //Store the selectd customer ID
   });
+
+  useEffect(() => {
+    dispatch(fetchCustomers());
+  }, [dispatch]);
+
 
   // Safety synchronization hook: ensures state updates if props arrive slightly delayed
   useEffect(() => {
     if (url) {
-      setFormData(prev => ({ ...prev, DownloadUrl: url }));
+      setFormData(prev => ({ ...prev, 
+        ...(url && { DownloadUrl: url }),
+        ...(imageUrl && { imageUrl }),
+        ...(customerId && { customerId })}));
     }
-  }, [url]);
+  }, [url, imageUrl, customerId ]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,8 +45,10 @@ function PictureCreateForm({ imageUrl, url }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.description || !formData.price || !formData.DownloadUrl) {
-      setError('Please fill in all fields');
+    setFormError(null);
+    if (!formData.title || !formData.description ||
+       !formData.price || !formData.DownloadUrl || !formData.customerId ) {
+      setError('Please fill in all fields and select a customer');
       return;
     }
 
@@ -103,6 +119,29 @@ function PictureCreateForm({ imageUrl, url }) {
               required
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">Select Customer</label>
+            <select
+              id="customerId"
+              name="customerId"
+              value={formData.customerId}
+              onChange={handleChange}
+              required
+              disabled={customersLoading}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            ><option value="">
+              {customersLoading ? 'Loading customers...' : '-- Select a Customer --'}
+            </option>
+            {customers.map((customer) => ( 
+              <option key={customer.customerId} value={customer.customerId}>
+                {customer.firstName} {customer.lastName}
+              </option>
+            ))}
+            </select>
+            {customersError && (
+              <p className="text-red-500 text-xs mt-1">Failed to load customers: {customersError}</p>
+            )}
           </div>
           <button
             type="submit"
