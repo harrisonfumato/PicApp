@@ -18,7 +18,8 @@ function PartialUpdateCustomer({ customerId, onSuccess }) {
       value: formData.FirstName,
     }];
 
-    axios.patch(`${apiBaseUrl}/api/HotelBooking/UpdatePartial/${customerId}`, patchDocument)
+    axios.patch(`${apiBaseUrl}/api/customer/updatePartial/${customerId}`, patchDocument,
+    { headers: { 'Content-Type': 'application/json-patch+json' }})
       .then((response) => {
         console.log('Customer partially updated successfully:', response.data);
         if (onSuccess) {

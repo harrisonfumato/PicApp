@@ -1,5 +1,6 @@
 // ListCustomers.jsx
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCustomers } from '../../redux/customerSlice'; // Adjust the import path as necessary
 import DeleteCustomer from './DeleteCustomer'; // Adjust the import path as necessary
@@ -45,6 +46,11 @@ function ListCustomers() {
               <td className="py-2 px-4 border-b">{customer.email}</td>
               <td className="py-2 px-4 border-b">{customer.phone}</td>
               <td className="py-2 px-4 border-b">
+                <Link to={`/update/${customer.customerId}`}>
+                  <button className="bg-blue-500 text-white hover:bg-blue-700 px-4 py-2 rounded">
+                    Update
+                  </button>
+                </Link>
                 <DeleteCustomer customerId={customer.customerId} onDelete={handleDelete} customerDetails={customer} />
               </td>
             </tr>

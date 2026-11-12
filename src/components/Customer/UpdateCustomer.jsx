@@ -18,10 +18,15 @@ function UpdateCustomer() {
 
   // Environment variable (API base URL)
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
+  const token = localStorage.getItem('token');
+  const authHeaders = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
   useEffect(() => {
     // Fetch the existing customer data when the component mounts
-    axios.get(`${apiBaseUrl}/api/customer/${id}`)
+    axios.get(`${apiBaseUrl}/api/customer/${id}`, authHeaders)
       .then((response) => {
         const customerData = response.data;
         setFormData({
@@ -44,7 +49,7 @@ function UpdateCustomer() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.put(`${apiBaseUrl}/api/customer/update/${id}`, formData)
+    axios.put(`${apiBaseUrl}/api/customer/update/${id}`, formData, authHeaders)
       .then((response) => {
         console.log('Customer updated successfully:', response.data);
         navigate('/customers');
