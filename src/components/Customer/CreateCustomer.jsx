@@ -11,6 +11,7 @@ function CreateCustomer() {
     LastName: '',
     Email: '',
     Phone: '',
+    CustomerId: "",
     UserId: ''
   });
 
@@ -41,6 +42,7 @@ function CreateCustomer() {
             LastName: '',
             Email: '',
             Phone: '',
+            CustomerId: "",
             UserId: user.id // Maintain the UserId in the form data
           });
         })
