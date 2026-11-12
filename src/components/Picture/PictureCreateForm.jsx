@@ -4,7 +4,7 @@ import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust impor
 import { fetchCustomers } from '../../redux/customerSlice'; // Adjust the import path as necessary
 
 // 1. Accept 'url' instead of 'DownloadUrl' to match backend casing
-function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
+function PictureCreateForm({ imageUrl, url, customerId, publicIds, files, folderName = ""}) {
   const dispatch = useDispatch();
   console.log("Passed URL:", url) 
 

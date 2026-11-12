@@ -92,7 +92,7 @@ function PictureUploadForm() {
               </div>
               <div className="flex items-center justify-center mb-2">
                 <button
-                type="button"
+                  type="button"
                   className={`bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${uploading ? 'cursor-not-allowed' : ''}`}
                   onClick={handleUpload}
                   disabled={uploading}
