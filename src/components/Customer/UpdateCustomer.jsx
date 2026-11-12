@@ -21,7 +21,7 @@ function UpdateCustomer() {
 
   useEffect(() => {
     // Fetch the existing customer data when the component mounts
-    axios.get(`${apiBaseUrl}/api/customer/update/${id}`)
+    axios.get(`${apiBaseUrl}/api/customer/${id}`)
       .then((response) => {
         const customerData = response.data;
         setFormData({
@@ -44,7 +44,7 @@ function UpdateCustomer() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.put(`${apiBaseUrl}/api/customer/${id}`, formData)
+    axios.put(`${apiBaseUrl}/api/customer/update/${id}`, formData)
       .then((response) => {
         console.log('Customer updated successfully:', response.data);
         navigate('/customers');
