@@ -64,7 +64,7 @@ function PictureUploadForm() {
         // Extract the preview image thumbnail from the first object inside the files array
           imageUrl={uploadResponse.files[0]?.url}
           url={uploadResponse.folderUrl} // Pass the folder URL directly
-          publicIds={uploadResponse.files.map((file) => file.publicId).join(",")} // Array of all pulicIds
+          publicIds={uploadResponse.files?.map((file) => file.publicId) || []} // Array of all pulicIds
           files={uploadResponse.files}  // Optional: pass full array of { publicId, url } if you need publicIds later
         />
       ) : (
@@ -92,6 +92,7 @@ function PictureUploadForm() {
               </div>
               <div className="flex items-center justify-center mb-2">
                 <button
+                type="button"
                   className={`bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${uploading ? 'cursor-not-allowed' : ''}`}
                   onClick={handleUpload}
                   disabled={uploading}

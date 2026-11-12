@@ -21,7 +21,7 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
     folderName: '',
     DownloadUrl: url || "",// 2. Fallback to empty string if undefined
     customerId: customerId || '', //Store the selectd customer ID
-    publicIds: Array.isArray(publicIds) ? publicIds.join(',') : (publicIds || '' ), // Save all cloudinary publicIds
+    publicIds: Array.isArray(publicIds) ? publicIds : [], // Save all cloudinary publicIds
   });
 
   useEffect(() => {
@@ -33,13 +33,16 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
   useEffect(() => {
     if (url) {
       setFormData(prev => ({ ...prev, 
-        ...(url && { DownloadUrl: url }),
-        ...(imageUrl && { imageUrl }),
-        ...(customerId && { customerId}),
-        ...(publicIds && { publicIds: 
-        Array.isArray(publicIds) ? publicIds.join(',') : publicIds, }), }));
+        ...(url !== undefined && { DownloadUrl: url }),
+        ...(imageUrl !== undefined && { imageUrl }),
+        ...(customerId !== undefined && { customerId}),
+        ...(folderName !== undefined && {
+          folderName: folderName || '',
+        }),
+        ...(publicIds !== undefined && {
+          publicIds: Array.isArray(publicIds) ? publicIds : [], }), }));
     }
-  }, [url, imageUrl, customerId, publicIds ]);
+  }, [url, imageUrl, customerId, publicIds, folderName ]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,25 +52,46 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError(null);
-    if (!formData.title || !formData.description ||
-       !formData.price || !formData.DownloadUrl || 
-       !formData.customerId || !formData.publicIds ) {
-      setFormError('Please fill in all fields and select a customer'); // 3. Fixed setError -> setFormError
+    if ( !formData.title.trim() ||
+      !formData.description.trim() ||
+      String(formData.price).trim() === '' ||
+      !Number.isFinite(price) ||
+      !formData.DownloadUrl ||
+      !formData.customerId ||
+      !Number.isInteger(selectedCustomerId) ||
+      !Array.isArray(formData.publicIds) ||
+      formData.publicIds.length === 0 ||
+      formData.publicIds.some(
+      (id) => typeof id !== 'string' || !id.trim())) {
+      setFormError('Please fill in all fields and select a customer, and uplaod your pictures.'); // 3. Fixed setError -> setFormError
       return;
     }
     // Format numberic fields for your c# PictureDto
     const payload = {
       ...formData,
-      price: parseFloat(formData.price),
-      customerId: parseInt(formData.customerId, 10),
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      price,
+      customerId: selectedCustomerId,
+      publicIds: [...formData.publicIds],
     }
 
     try {
-      await dispatch(createPictureDetails(formData)).unwrap();
+      await dispatch(createPictureDetails(payload)).unwrap();
       // Handle success (e.g., redirect, show a message)
       alert('Picture created successfully!');
     } catch (err) {
-      setFormError(error?.message || 'Error creating picture. Please try again.');
+      console.error('Error creating picture:', err);
+      const response = err?.response?.data ?? err;
+
+      const validationMessages = response?errors && typeof response.errors === 'object'
+        ? Object.values(response.errors)
+          .flat()
+          .filter((message) => typeof message === 'string')
+          .join('') 
+        : '':
+      setFormError(validationMessages ||
+        (typeof response === 'string' ? response: response?.message ) || 'Error creating picture. Please try again.');
     }
   };
 
@@ -123,6 +147,7 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
             <label className="block text-gray-700 text-sm font-bold mb-2">Price:</label>
             <input
               type="number"
+              step="0.01"
               name="price"
               value={formData.price}
               onChange={handleChange}
