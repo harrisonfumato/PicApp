@@ -31,19 +31,30 @@ function CreateCustomer() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.UserId) {
+  
+    // Check both formData.UserId and user?.id as a fallback
+    const currentUserId = formData.UserId || user.id;
+
+    if (currentUserId) {
+      // Ensures UserId is definitely included in the payload
+      const payload = { ...formData, UserId: currentUserId };
+
       dispatch(createCustomer(formData))
         .unwrap()
         .then(() => {
           console.log('Customer created successfully');
           alert("Customer created successfully")
+          windows.location.reload();
           setFormData({
             FirstName: '',
             LastName: '',
             Email: '',
             Phone: '',
-            UserId: user.id // Maintain the UserId in the form data
+            UserId: prev.UserId || user.id // Maintain the UserId in the form data
           });
+          
+          //Optional: Refresh your customer list cleanly bia Redux instead of reloading
+          dispatch(fetchCustomers());
         })
         .catch((error) => {
           console.error('Error creating customer:', error);
