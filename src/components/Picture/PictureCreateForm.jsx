@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust import path
 import { fetchCustomers } from '../../redux/customerSlice'; // Adjust the import path as necessary
 
@@ -8,7 +8,7 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
   const dispatch = useDispatch();
   console.log("Passed URL:", url) 
 
-  const { list: customers, loading: customersLoading, error: customersError } = useSelector((state) => state.customers);
+  const { list: customers = [], loading: customersLoading, error: customersError } = useSelector((state) => state.customers);
 
   
   const [formError, setFormError] = useState(null);
@@ -21,7 +21,7 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
     folderName: '',
     DownloadUrl: url || "",// 2. Fallback to empty string if undefined
     customerId: customerId || '', //Store the selectd customer ID
-    PublicIds: publicIds || [], // Save all cloudinary publicIds
+    publicIds: Array.isArray(publicIds) ? publicIds.join(',') : (publicIds || '' ), // Save all cloudinary publicIds
   });
 
   useEffect(() => {
@@ -36,7 +36,8 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
         ...(url && { DownloadUrl: url }),
         ...(imageUrl && { imageUrl }),
         ...(customerId && { customerId}),
-        ...(publicIds && { publicIds }), }));
+        ...(publicIds && { publicIds: 
+        Array.isArray(publicIds) ? publicIds.join(',') : publicIds, }), }));
     }
   }, [url, imageUrl, customerId, publicIds ]);
   
@@ -51,8 +52,14 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
     if (!formData.title || !formData.description ||
        !formData.price || !formData.DownloadUrl || 
        !formData.customerId || !formData.publicIds ) {
-      setError('Please fill in all fields and select a customer');
+      setFormError('Please fill in all fields and select a customer'); // 3. Fixed setError -> setFormError
       return;
+    }
+    // Format numberic fields for your c# PictureDto
+    const payload = {
+      ...formData,
+      price: parseFloat(formData.price),
+      customerId: parseInt(formData.customerId, 10),
     }
 
     try {
@@ -60,7 +67,7 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
       // Handle success (e.g., redirect, show a message)
       alert('Picture created successfully!');
     } catch (err) {
-      setError('Error creating picture. Please try again.');
+      setFormError(error?.message || 'Error creating picture. Please try again.');
     }
   };
 
@@ -84,7 +91,7 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
               onChange={handleChange}
               required
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
+            /> 
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Description:</label>
@@ -152,7 +159,7 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files}) {
           >
             Create Picture
           </button>
-          {error && <p className="text-red-600 mt-4">{error}</p>}
+          {formError && <p className="text-red-600 mt-4">{formError}</p>}
         </form>
       </div>
     </div>
