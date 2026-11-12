@@ -11,7 +11,7 @@ function CreateCustomer() {
     LastName: '',
     Email: '',
     Phone: '',
-    UserId: ''
+    UserId: user?.id || ''
   });
 
   useEffect(() => {
@@ -26,7 +26,8 @@ function CreateCustomer() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ 
+      ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
@@ -44,15 +45,15 @@ function CreateCustomer() {
         .then(() => {
           console.log('Customer created successfully');
           alert("Customer created successfully")
-          windows.location.reload();
-          setFormData({
+          setFormData((prev) => ({
             FirstName: '',
             LastName: '',
             Email: '',
             Phone: '',
             UserId: prev.UserId || user.id // Maintain the UserId in the form data
-          });
           
+          }));
+
           //Optional: Refresh your customer list cleanly bia Redux instead of reloading
           dispatch(fetchCustomers());
         })
