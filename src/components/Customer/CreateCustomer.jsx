@@ -36,6 +36,7 @@ function CreateCustomer() {
         .unwrap()
         .then(() => {
           console.log('Customer created successfully');
+          alert("Customer created successfully")
           setFormData({
             FirstName: '',
             LastName: '',
