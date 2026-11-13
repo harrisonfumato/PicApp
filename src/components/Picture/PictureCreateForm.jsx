@@ -4,28 +4,32 @@ import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust impor
 import { fetchCustomers } from '../../redux/customerSlice'; // Adjust the import path as necessary
 
 // 1. Accept 'url' instead of 'DownloadUrl' to match backend casing
-function PictureCreateForm({ imageUrl, url, customerId, publicIds, files, folderName = ""}) {
+function PictureCreateForm({
+  imageUrl,
+  url,
+  customerId,
+  publicIds,
+  folderName = '',
+}) {
   const dispatch = useDispatch();
-  console.log("Passed URL:", url) 
+  const {
+    list: customers = [],
+    loading: customersLoading,
+    error: customersError,
+  } = useSelector((state) => state.customers);
 
-  const { list: customers = [], loading: customersLoading, error: customersError } = useSelector((state) => state.customers);
-
-  
   const [formError, setFormError] = useState(null);
-
-  // Declare these before using them in validaton or this payload
-  const price = Number(formData.price);
-  const selectedCustomerId = Number(formData.customerId);
+  const [submitting, setSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    imageUrl: imageUrl, // Prepopulate with uploaded image URL
+    imageUrl: imageUrl || '',
     price: '',
-    folderName: '',
-    DownloadUrl: url || "",// 2. Fallback to empty string if undefined
-    customerId: customerId || '', //Store the selectd customer ID
-    publicIds: Array.isArray(publicIds) ? publicIds : [], // Save all cloudinary publicIds
+    folderName,
+    DownloadUrl: url || '',
+    customerId: customerId ?? '',
+    publicIds: Array.isArray(publicIds) ? publicIds : [],
   });
 
   useEffect(() => {
@@ -33,30 +37,48 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files, folder
   }, [dispatch]);
 
 
-  // Safety synchronization hook: ensures state updates if props arrive slightly delayed
+
   useEffect(() => {
-    if (url) {
-      setFormData(prev => ({ ...prev, 
-        ...(url !== undefined && { DownloadUrl: url }),
-        ...(imageUrl !== undefined && { imageUrl }),
-        ...(customerId !== undefined && { customerId}),
-        ...(folderName !== undefined && {
-          folderName: folderName || '',
-        }),
-        ...(publicIds !== undefined && {
-          publicIds: Array.isArray(publicIds) ? publicIds : [], }), }));
-    }
-  }, [url, imageUrl, customerId, publicIds, folderName ]);
-  
+    setFormData((prev) => ({
+      ...prev,
+      ...(url !== undefined && {
+        DownloadUrl: url || '',
+      }),
+      ...(imageUrl !== undefined && {
+        imageUrl: imageUrl || '',
+      }),
+      ...(customerId !== undefined && {
+        customerId: customerId ?? '',
+      }),
+      folderName,
+      ...(publicIds !== undefined && {
+        publicIds: Array.isArray(publicIds) ? publicIds : [],
+      }),
+    }));
+  }, [url, imageUrl, customerId, publicIds, folderName]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (submitting) return;
+
     setFormError(null);
-    if ( !formData.title.trim() ||
+
+    // Convert values here, after formData has been initialized.
+    const price = Number(formData.price);
+    const selectedCustomerId = Number(formData.customerId);
+
+    if (
+      !formData.title.trim() ||
       !formData.description.trim() ||
       String(formData.price).trim() === '' ||
       !Number.isFinite(price) ||
@@ -66,38 +88,62 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files, folder
       !Array.isArray(formData.publicIds) ||
       formData.publicIds.length === 0 ||
       formData.publicIds.some(
-      (id) => typeof id !== 'string' || !id.trim())) {
-      setFormError('Please fill in all fields and select a customer, and uplaod your pictures.'); // 3. Fixed setError -> setFormError
+        (id) => typeof id !== 'string' || !id.trim()
+      )
+    ) {
+      setFormError(
+        'Please complete all fields, select a customer, and upload your pictures.'
+      );
       return;
     }
-    // Format numberic fields for your c# PictureDto
+
     const payload = {
       ...formData,
       title: formData.title.trim(),
       description: formData.description.trim(),
-      price: price,
+      price,
       customerId: selectedCustomerId,
       publicIds: [...formData.publicIds],
-    }
+    };
+
+    setSubmitting(true);
 
     try {
       await dispatch(createPictureDetails(payload)).unwrap();
-      // Handle success (e.g., redirect, show a message)
+
+      
       alert('Picture created successfully!');
     } catch (err) {
       console.error('Error creating picture:', err);
+
       const response = err?.response?.data ?? err;
 
-      const validationMessages = response?errors && typeof response.errors === 'object'
-        ? Object.values(response.errors)
-          .flat()
-          .filter((message) => typeof message === 'string')
-          .join('') 
-        : '':
-      setFormError(validationMessages ||
-        (typeof response === 'string' ? response: response?.message ) || 'Error creating picture. Please try again.');
+      const validationMessages =
+        response?.errors && typeof response.errors === 'object'
+          ? Object.values(response.errors)
+              .flat()
+              .filter((message) => typeof message === 'string')
+              .join(' ')
+          : '';
+
+      const message =
+        typeof response === 'string'
+          ? response
+          : typeof response?.message === 'string'
+            ? response.message
+            : '';
+
+      setFormError(
+        validationMessages ||
+          message ||
+          'Error creating picture. Please try again.'
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  // Keep your existing return (...) immediately below this line.
 
   return (
     <div className="container mx-auto mt-5">
@@ -184,9 +230,10 @@ function PictureCreateForm({ imageUrl, url, customerId, publicIds, files, folder
           </div>
           <button
             type="submit"
+            disabled={submitting || customersLoading}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
           >
-            Create Picture
+            {submitting ? 'Creating...' : 'Create Picture'}
           </button>
           {formError && <p className="text-red-600 mt-4">{formError}</p>}
         </form>
