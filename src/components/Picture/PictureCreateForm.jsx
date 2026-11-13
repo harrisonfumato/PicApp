@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPictureDetails } from '../../redux/pictureSlice'; // Adjust import path
 import { fetchCustomers } from '../../redux/customerSlice'; // Adjust the import path as necessary
-
+import { useNavigate } from 'react-router-dom'; // Add this import
 // 1. Accept 'url' instead of 'DownloadUrl' to match backend casing
 function PictureCreateForm({
   imageUrl,
@@ -12,6 +12,7 @@ function PictureCreateForm({
   folderName = '',
 }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     list: customers = [],
     loading: customersLoading,
@@ -113,6 +114,7 @@ function PictureCreateForm({
 
       
       alert('Picture created successfully!');
+      navigate('/PicTable')
     } catch (err) {
       console.error('Error creating picture:', err);
 
